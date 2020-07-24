@@ -58,4 +58,7 @@ void parse_opts(char *, option_t *);
 void print_dnames(struct dirent **, const option_t);
 void read_dirs(DIR *, struct dirent **, const option_t);
 
+
+void quick_sort(file_t **array, size_t size);
+
 #endif /* _HLS_H_ */
