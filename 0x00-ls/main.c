@@ -81,7 +81,7 @@ int main(int argc, const char **argv)
 	{
 		DIR *dir = opendir(".");
 
-		read_dirs(dir, entries, options);
+		read_entries(dir, entries, options);
 		print_dnames(entries, options);
 		closedir(dir);
 	}

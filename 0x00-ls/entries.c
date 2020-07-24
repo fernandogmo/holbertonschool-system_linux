@@ -2,13 +2,13 @@
 
 
 /**
- * read_dirs - read DIR entries into dirent array and null-terminate
+ * read_entries - read DIR entries into dirent array and null-terminate
  * @dir: DIR file to read from
  * @entries: buffer for storing dirents
  * @options: readonly option bitflag
  * Return: Nothing
  */
-void read_dirs(DIR *dir, struct dirent **entries, const option_t options)
+void read_entries(DIR *dir, struct dirent **entries, const option_t options)
 {
 	struct dirent *d = NULL;
 	int i = 0;
