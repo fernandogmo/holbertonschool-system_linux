@@ -50,7 +50,7 @@ void print_files_in_current_dir(file_t **files,
 		buf += sprintf(buf, "%s%s", f->path, sep);
 	}
 	if (buf != start)
-		_puts(start);
+		puts(start);
 	free(start);
 }
 
@@ -99,7 +99,7 @@ void print_subentries(file_t *dom,
 		buf += sprintf(buf, "%s%s", dom->subentries[i]->path, sep);
 	}
 	if (buf != start)
-		_puts(start);
+		puts(start);
 	free(start);
 }
 
@@ -127,7 +127,7 @@ void print_files_in_dirs(file_t **dirs,
 		print_subentries(dom, sub_count, (size_t)dir_count, options);
 
 		if (i < (dir_count - 1))
-			_puts("");
+			puts("");
 
 		{
 			size_t j = 0;

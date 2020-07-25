@@ -36,29 +36,3 @@ int _strcoll(char *s1, char *s2)
 	return (_strcmp(s1, s2));
 }
 
-/**
- * _putchar - writes the character c to stdout
- * @c: The character to print
- * Return: 1 on SUCCESS,
- *	   -1 on error and errno is set appropriately.
- */
-int _putchar(char c)
-{
-	return (write(1, &c, 1));
-}
-
-/**
- * _puts - takes a pointer to string and prints the string
- *         it's pointing to, followed by a newline.
- * @str: pointer to a char
- *
- */
-void _puts(char *str)
-{
-	while (*str)
-	{
-		_putchar(*str);
-		str++;
-	}
-	_putchar('\n');
-}

@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 	/* print every file in every dir */
 	_alphasort(dirs, dir_count);
 	if (dir_count > 1)
-		_puts("");
+		puts("");
 	print_files_in_dirs(dirs, dir_count, options);
 
 	for (i = 0; i < file_count; ++i)
@@ -88,10 +88,10 @@ void parse_opts(char *arg, option_t *options)
 	while (*++arg)
 	{
 		#if TESTING
-		_putchar(*arg);
-		_putchar('=');
+		putchar(*arg);
+		putchar('=');
 		dbg_print_binary((unsigned char)*options);
-		_putchar('\n');
+		putchar('\n');
 		#endif
 		switch (*arg)
 		{

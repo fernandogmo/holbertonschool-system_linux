@@ -61,10 +61,10 @@ void dbg_print_binary(unsigned char n)
 	{
 		begin = (bit & n) ? 1 : begin;
 		if (begin)
-			(bit & n) ? _putchar('1') : _putchar('0');
+			(bit & n) ? putchar('1') : putchar('0');
 		bit >>= 1;
 	}
 	if (n == 0)
-		_putchar('0');
+		putchar('0');
 }
 
