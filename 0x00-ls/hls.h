@@ -46,8 +46,6 @@ typedef struct file_t
 
 void parse_args(char **, char **, option_t *);
 void parse_opts(char *, option_t *);
-void print_dnames(struct dirent **, const option_t);
-void read_dirs(DIR *, struct dirent **, const option_t);
 
 void separate_files(char **, file_t **, file_t **, size_t *, size_t *);
 void print_files_in_current_dir(file_t **, size_t, option_t);

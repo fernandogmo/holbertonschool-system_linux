@@ -1,6 +1,13 @@
 #include "hls.h"
 
-
+/**
+ * separate_files - it does this
+ * @args: args
+ * @files: files
+ * @dirs: dirs
+ * @file_count: counts files
+ * @dir_count: counts dirs
+ */
 void separate_files(char **args,
 		    file_t **files, file_t **dirs,
 		    size_t *file_count, size_t *dir_count)
@@ -25,7 +32,12 @@ void separate_files(char **args,
 	}
 }
 
-
+/**
+ * print_files_in_current_dir - it does this
+ * @files: files
+ * @file_count: counts files
+ * @options: options bitflag
+ */
 void print_files_in_current_dir(file_t **files,
 				size_t file_count,
 				option_t options)
@@ -54,7 +66,12 @@ void print_files_in_current_dir(file_t **files,
 	free(start);
 }
 
-
+/**
+ * read_subentries - it does this
+ * @dirp: derps
+ * @dom: doms a sub
+ * @sub_count: counts subs
+ */
 void read_subentries(DIR *dirp,
 		     file_t *dom,
 		     size_t *sub_count)
@@ -72,7 +89,13 @@ void read_subentries(DIR *dirp,
 	}
 }
 
-
+/**
+ * print_subentries - it does this
+ * @dom: doms a sub
+ * @sub_count: counts subs
+ * @dir_count: counts dirs
+ * @options: options bitflag
+ */
 void print_subentries(file_t *dom,
 		      size_t sub_count,
 		      size_t dir_count,
@@ -103,7 +126,12 @@ void print_subentries(file_t *dom,
 	free(start);
 }
 
-
+/**
+ * print_files_in_dirs - it does this
+ * @dirs: dirs
+ * @dir_count: counts dirs
+ * @options: options bitflag
+ */
 void print_files_in_dirs(file_t **dirs,
 			 size_t dir_count,
 			 option_t options)
