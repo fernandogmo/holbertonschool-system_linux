@@ -1,16 +1,22 @@
 #include "hls.h"
 
-void parse_args(char **argv, DIR **dirs, option_t *options)
+void parse_args(char **argv, char **args, option_t *options)
 {
 	char *arg = NULL;
+	size_t i = 0;
 
-	while ((arg = *++argv))
+	for (; arg = argv[i]; ++i)
 	{
 		putchar(*arg), puts("");
 		if ((arg[0] == '-') && (arg[1] != '\0'))
 		{
 			parse_opts(arg, options);
 		}
+		else
+		{
+			args[i] = arg;
+		}
+
 	}
 	*options |= NONE;
 	(void)dirs;

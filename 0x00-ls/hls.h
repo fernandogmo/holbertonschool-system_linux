@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include "holberton.h"
 
-#define TESTING 1
+#define TESTING 0
 #define ANSI_TERM_RED "\033[31m"
 #define TERMRESET "\033[0m"
 #define CHARS "===================================="
@@ -17,16 +17,6 @@
 
 #define BUFSIZE 1024
 #define UNUSED(x) __attribute__((__unused__)) UNUSED_ ## x
-
-/**
- * enum bool_t - homebrew boolean for ANSI C compliance
- * @FALSE: 0
- * @TRUE: 1
- */
-typedef enum bool_t
-{
-	FALSE, TRUE
-} bool_t;
 
 typedef unsigned char option_t;
 
@@ -49,19 +39,31 @@ typedef struct file_t
 {
 	char *path;
 	struct stat sb;
-	bool_t is_dir;
+	int is_dir;
 	struct file_t **subentries;
 } file_t;
 
-void parse_args(char**, DIR **, option_t *);
+void parse_args(char **, char **, option_t *);
 void parse_opts(char *, option_t *);
 void print_dnames(struct dirent **, const option_t);
 void read_dirs(DIR *, struct dirent **, const option_t);
 
+void separate_files(char **, file_t **, file_t **, size_t *, size_t *);
+void print_files_in_current_dir(file_t **, size_t);
+void read_subentries(DIR *, file_t *, size_t *);
+void print_subentries(file_t *, size_t, size_t);
+void print_files_in_dirs(file_t **, size_t);
 
 void _quicksort(file_t **, size_t);
 void _alphasort(file_t **, int);
-void _sort_subentries(file_t **, int);
+void sort_subentries(file_t **, int);
+
+void dbg_print_array(file_t **, size_t);
+void dbg_swap(file_t **, file_t **, file_t **, size_t);
+void dbg_print_binary(unsigned long int);
+
+int _strcoll(char *, char *);
+int _strcmp(char *, char *);
 
 
 #endif /* _HLS_H_ */

@@ -1,29 +1,5 @@
 #include "../hls.h"
 
-char *_memcpy(char *dest, char *src, unsigned int n)
-{
-	unsigned int i;
-
-	for (i = 0; i < n; i++)
-		dest[i] = src[i];
-
-	return (dest);
-}
-
-int _strcmp(char *s1, char *s2)
-{
-	int i = 0;
-
-	while (s1[i] && s2[i] && s1[i] == s2[i])
-		i++;
-	return (s1[i] - s2[i]);
-}
-
-int _strcoll(char *s1, char *s2)
-{
-	return (_strcmp(s1, s2));
-}
-
 /**
  * swap - swaps two file_t pointers in an array
  * @a: pointer to first file_t pointer to swap
@@ -40,52 +16,6 @@ void swap(file_t **a, file_t **b)
 	*b = tmp;
 }
 
-/**
- * print_array - Prints pathnames in an array of file_t pointers
- *
- * @array: The array to be printed
- * @size: Number of elements in @array
- */
-void print_array(file_t **array, size_t size)
-{
-    size_t i;
-
-    i = 0;
-    while (array && i < size)
-    {
-        if (i > 0)
-            printf(", ");
-        printf("%s", array[i]->path);
-        ++i;
-    }
-    printf("\n");
-}
-
-/**
- * dbg_swap - swaps two values in file_t pointer array if they are not equal, and
- *        prints the current state of the array it was first called with.
- * @a: first value to swap
- * @b: second value to swap
- * @array: pointer to first element of initial array
- * @size: full size of initial array
- */
-void dbg_swap(file_t **a, file_t **b, file_t **array, size_t size)
-{
-	/* for printing */
-	static file_t **ptr;
-	static size_t s;
-
-	file_t *tmp = *a;
-
-	if (*a != *b)
-	{
-		*a = *b;
-		*b = tmp;
-		if (!ptr)
-			ptr = array, s = size;
-		print_array(ptr, s);
-	}
-}
 
 /**
  * partition - implements Lomuto partitioning scheme
@@ -129,13 +59,25 @@ void _quicksort(file_t **array, size_t size)
 	}
 }
 
+/**
+ * _alphasort - sorts an array of file_t pointers using partition-exchange
+ * *            sorting and a bespoke comparing function in the partition call
+ * @files: file_t array to be sorted
+ * @file_count: length of @array
+ */
 void _alphasort(file_t **files, int file_count)
 {
 	/* TODO consider options */
 	_quicksort(files, (size_t)file_count);
 }
 
-void _sort_subentries(file_t **dirs, int dir_count)
+/**
+ * sort_subentries - sorts an array of file_t pointers using partition-exchange
+ * *            sorting and a bespoke comparing function in the partition call
+ * @dirs: file_t array to be sorted
+ * @dir_count: length of @array
+ */
+void sort_subentries(file_t **dirs, int dir_count)
 {
 	/* TODO consider options */
 	_alphasort(dirs, (size_t)dir_count);
