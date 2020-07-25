@@ -1,4 +1,4 @@
-#include "../hls.h"
+#include "hls.h"
 
 /**
  * swap - swaps two file_t pointers in an array

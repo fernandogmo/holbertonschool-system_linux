@@ -1,4 +1,4 @@
-#include "../hls.h"
+#include "hls.h"
 
 
 void separate_files(char **args,
@@ -24,7 +24,11 @@ void separate_files(char **args,
 		}
 	}
 }
-void print_files_in_current_dir(file_t **files, size_t file_count)
+
+
+void print_files_in_current_dir(file_t **files,
+				size_t file_count,
+				option_t options)
 {
 	char *buf = malloc(sizeof(*buf) * BUFSIZE);
 	char *start = buf;
@@ -35,15 +39,19 @@ void print_files_in_current_dir(file_t **files, size_t file_count)
 	{
 		file_t *f = files[i];
 		/* TODO consider options */
-		/* char *sep = (options & ONEPERLINE) ? "\n" : "  "; */
+		char *sep = (options & ONEPERLINE) ? "\n" : "  ";
 
-		buf += sprintf(buf, "%s  ", f->path);
+		buf += sprintf(buf, "%s%s", f->path, sep);
 	}
 	if (buf != start)
-		puts(start);
+		_puts(start);
 	free(start);
 }
-void read_subentries(DIR *dirp, file_t *dom, size_t *sub_count)
+
+
+void read_subentries(DIR *dirp,
+		     file_t *dom,
+		     size_t *sub_count)
 {
 	struct dirent *d;
 
@@ -57,7 +65,12 @@ void read_subentries(DIR *dirp, file_t *dom, size_t *sub_count)
 		dom->subentries[(*sub_count)++] = sub;
 	}
 }
-void print_subentries(file_t *dom, size_t sub_count, size_t dir_count)
+
+
+void print_subentries(file_t *dom,
+		      size_t sub_count,
+		      size_t dir_count,
+		      option_t options)
 {
 	char *buf = malloc(sizeof(*buf) * BUFSIZE);
 	char *start = buf;
@@ -68,15 +81,19 @@ void print_subentries(file_t *dom, size_t sub_count, size_t dir_count)
 	for (; i < sub_count; ++i)
 	{
 		/* TODO consider options */
-		/* char *sep = (options & ONEPERLINE) ? "\n" : "  "; */
+		char *sep = (options & ONEPERLINE) ? "\n" : "  ";
 
-		buf += sprintf(buf, "%s  ", dom->subentries[i]->path);
+		buf += sprintf(buf, "%s%s", dom->subentries[i]->path, sep);
 	}
 	if (buf != start)
-		puts(start);
+		_puts(start);
 	free(start);
 }
-void print_files_in_dirs(file_t **dirs, size_t dir_count)
+
+
+void print_files_in_dirs(file_t **dirs,
+			 size_t dir_count,
+			 option_t options)
 {
 	size_t i = 0;
 
@@ -94,10 +111,10 @@ void print_files_in_dirs(file_t **dirs, size_t dir_count)
 		sort_subentries(dom->subentries, sub_count);
 
 		/* print sorted subentries */
-		print_subentries(dom, sub_count, (size_t)dir_count);
+		print_subentries(dom, sub_count, (size_t)dir_count, options);
 
 		if (i < (dir_count - 1))
-			puts("");
+			_puts("");
 
 		{
 			size_t j = 0;

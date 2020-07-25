@@ -1,4 +1,4 @@
-#include "../hls.h"
+#include "hls.h"
 
 
 /**
@@ -45,4 +45,20 @@ int _strcoll(char *s1, char *s2)
 int _putchar(char c)
 {
 	return (write(1, &c, 1));
+}
+
+/**
+ * _puts - takes a pointer to string and prints the string
+ *         it's pointing to, followed by a newline.
+ * @str: pointer to a char
+ *
+ */
+void _puts(char *str)
+{
+	while (*str)
+	{
+		_putchar(*str);
+		str++;
+	}
+	_putchar('\n');
 }

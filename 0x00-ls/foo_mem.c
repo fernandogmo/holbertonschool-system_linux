@@ -1,4 +1,4 @@
-#include "../hls.h"
+#include "hls.h"
 
 /**
  * _calloc - allocates memory for an array of nmemb elements of

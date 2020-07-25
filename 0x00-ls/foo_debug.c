@@ -1,4 +1,4 @@
-#include "../hls.h"
+#include "hls.h"
 
 /**
  * dbg_print_array - Prints pathnames in an array of file_t pointers
@@ -50,12 +50,12 @@ void dbg_swap(file_t **a, file_t **b, file_t **array, size_t size)
 
 /**
   * dbg_print_binary - prints the binary representation of a number
-  * @n: long uint decimal
+  * @n: unsigned char decimal
   */
-void dbg_print_binary(unsigned long int n)
+void dbg_print_binary(unsigned char n)
 {
-	int begin = 0, ul_bits = sizeof(n) * 8;
-	unsigned long int bit  = 1UL << (ul_bits - 1);
+	int begin = 0, bit_offset = sizeof(n) * 8;
+	unsigned char bit  = 1 << (bit_offset - 1);
 
 	while (bit)
 	{
