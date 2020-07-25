@@ -41,6 +41,12 @@ void print_files_in_current_dir(file_t **files,
 		/* TODO consider options */
 		char *sep = (options & ONEPERLINE) ? "\n" : "  ";
 
+		if ((!(options & ALL) &&
+		    ((_strcmp(f->path, ".") == 0) ||
+		    ((_strcmp(f->path, "..") == 0)))))
+		{
+			continue;
+		}
 		buf += sprintf(buf, "%s%s", f->path, sep);
 	}
 	if (buf != start)
@@ -81,8 +87,15 @@ void print_subentries(file_t *dom,
 	for (; i < sub_count; ++i)
 	{
 		/* TODO consider options */
+		char *path = dom->subentries[i]->path;
 		char *sep = (options & ONEPERLINE) ? "\n" : "  ";
 
+		if ((!(options & ALL) &&
+		    ((_strcmp(path, ".") == 0) ||
+		    ((_strcmp(path, "..") == 0)))))
+		{
+			continue;
+		}
 		buf += sprintf(buf, "%s%s", dom->subentries[i]->path, sep);
 	}
 	if (buf != start)
