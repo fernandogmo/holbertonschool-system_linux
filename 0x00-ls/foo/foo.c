@@ -1,10 +1,5 @@
 #include "../hls.h"
 
-void _alphasort(file_t **files, int file_count)
-{
-	/* TODO consider options */
-	quick_sort(files, (size_t)file_count);
-}
 
 void separate_files(char **args,
 	file_t **files, file_t **dirs,
@@ -35,6 +30,8 @@ void print_files_in_current_dir(file_t **files, int file_count)
 	char *start = buf;
 	int i = 0;
 
+	/* TODO consider options */
+
 	for (; i < file_count; ++i)
 	{
 		file_t *f = files[i];
@@ -53,33 +50,54 @@ void print_files_in_dirs(file_t **dirs, int dir_count)
 	{
 		char *buf = malloc(sizeof(*buf) * BUFSIZE);
 		char *start = buf;
-		file_t *f = dirs[i];
+		file_t *dom = dirs[i];
+		size_t sub_count = 0;
 		struct dirent *d;
-		DIR *dir = opendir(f->path);
+		DIR *dir = opendir(dom->path);
+
+		dom->subentries = malloc(sizeof(dom->subentries) * BUFSIZE);
 
 		if (dir_count > 1)
-			printf("%s:\n", f->path);
+			printf("%s:\n", dom->path);
 		while ((d = readdir(dir)) != NULL)
 		{
 			/* TODO read entries into subentries */
-			/* f->subentries[i++] = d->d_name; */
-			buf += sprintf(buf, "%s  ", d->d_name);
-		}
-		closedir(dir);
-		/* Sort subentries with alphasort */
-		/* _alphasort(f->subentries, sub_count); */
+			file_t *sub = malloc(sizeof(*sub));
 
-		/* print sorted subentries */
-		/* while (subentries)
-		{
-			buf += sprintf(buf, "%s  ", subentries++);
+			sub->path = d->d_name;
+			lstat(sub->path, &sub->sb);
+			sub->is_dir = S_ISDIR(sub->sb.st_mode);
+			dom->subentries[sub_count++] = sub;
+			/* buf += sprintf(buf, "%s  ", d->d_name); */
 		}
-		 */
+		/* Sort subentries with alphasort */
+		/* TODO this segfaults */
+		_sort_subentries(dom->subentries, sub_count);
+		printf("%lu\n", sub_count);
+
+		/* TODO consider options */
+		/* print sorted subentries */
+		{
+			size_t j = 0;
+			for (; j < sub_count; ++j)
+			{
+				buf += sprintf(buf, "%s  ", dom->subentries[j]->path);
+			}
+		}
+
 		if (buf != start)
 			puts(start);
 		free(start);
 		if (i < (dir_count - 1))
 			puts("");
+
+		{
+			size_t j = 0;
+			for (; j < sub_count; ++j)
+				free(dom->subentries[j]);
+			free(dom->subentries);
+		}
+		closedir(dir);
 	}
 }
 int main(int argc, char *argv[])
@@ -107,14 +125,13 @@ int main(int argc, char *argv[])
 			files, dirs, &file_count, &dir_count);
 	(void)args;
 
-	/* sort files array */
-	_alphasort(files, file_count);
 
 	/* print all files in current dir */
+	_alphasort(files, file_count);
 	print_files_in_current_dir(files, file_count);
 
 	/* print every file in every dir */
-	/* sort_subentries(dirs, dir_count); */
+	_alphasort(dirs, dir_count);
 	if (dir_count > 1)
 		puts("");
 	print_files_in_dirs(dirs, dir_count);

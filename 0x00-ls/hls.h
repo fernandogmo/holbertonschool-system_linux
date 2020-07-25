@@ -43,14 +43,14 @@ typedef unsigned char option_t;
  * @stat: contains lstat struct for file
  * @is_dir: boolean to cache whether file is directory
  * * `S_ISDIR(file->stat.st_mode)`
- * @subentries: array of subentries when file is directory
+ * @subentries: pointer to array of subentries when file is directory
  */
 typedef struct file_t
 {
 	char *path;
 	struct stat sb;
 	bool_t is_dir;
-	struct dirent **subentries;
+	struct file_t **subentries;
 } file_t;
 
 void parse_args(char**, DIR **, option_t *);
@@ -59,6 +59,9 @@ void print_dnames(struct dirent **, const option_t);
 void read_dirs(DIR *, struct dirent **, const option_t);
 
 
-void quick_sort(file_t **array, size_t size);
+void _quicksort(file_t **, size_t);
+void _alphasort(file_t **, int);
+void _sort_subentries(file_t **, int);
+
 
 #endif /* _HLS_H_ */
