@@ -7,13 +7,13 @@
  */
 ssize_t _fgetchar(const int fd)
 {
-	static char buf[BUFSIZ];
+	static char buf[READ_SIZE];
 	static char *bufp = buf;
 	static int n;
 
 	if (n == 0)
 	{
-		n = read(fd, buf, BUFSIZ);
+		n = read(fd, buf, READ_SIZE);
 		bufp = buf;
 	}
 	return ((--n >= 0) ? (unsigned char) *bufp++ : EOF);
