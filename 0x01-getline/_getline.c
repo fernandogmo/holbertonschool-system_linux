@@ -1,4 +1,8 @@
 #include "_getline.h"
+#include <string.h>
+
+#define OPEN_MAX 256
+static filebuf_t fds[OPEN_MAX];
 
 /**
  * _fgetchar - get char from a file descriptor
@@ -7,18 +11,32 @@
  */
 ssize_t _fgetchar(const int fd)
 {
-	static char buf[READ_SIZE];
-	static char *bufp = buf;
-	static int n;
+	filebuf_t *fb;
+	int i;
 
-	if (n == 0)
+	if (fd == -1)
 	{
-		n = read(fd, buf, READ_SIZE);
-		bufp = buf;
+		for (i = 3; i < OPEN_MAX; ++i)
+		{
+			if (fds[i].is_open)
+			{
+				memset(fds[i].buf, 0, READ_SIZE);
+				fds[i].bufp = fds[i].buf;
+				fds[i].n = 0;
+			}
+		}
+		return (EOF);
 	}
-	return ((--n >= 0) ? (unsigned char) *bufp++ : EOF);
-}
 
+	fb = &fds[fd];
+	fb->is_open = 1;
+	if (fb->n == 0)
+	{
+		fb->n = read(fd, fb->buf, READ_SIZE);
+		fb->bufp = fb->buf;
+	}
+	return ((--fb->n >= 0) ? (unsigned char)*(fb->bufp)++ : EOF);
+}
 
 /**
  * _getline - gets lines
@@ -28,27 +46,34 @@ ssize_t _fgetchar(const int fd)
  */
 char *_getline(const int fd)
 {
-	static char *buf;
+	char *buf, *ptr;
 
-	buf = malloc(BUFSIZ);
-	if (buf == NULL)
+	if (fd == -1)
+	{
+		_fgetchar(-1);
 		return (NULL);
+	}
+	else
 	{
 		char c;
-		static char *ptr, *eptr;
 
+		buf = malloc(BUFSIZ);
+		if (buf == NULL)
+			return (NULL);
 		ptr = buf;
-		eptr = buf + BUFSIZ;
-
+		/* eptr = buf + BUFSIZ; */ /* TODO:  realloc if bigger buffer needed */
+		/* fill buffer */
 		while ((c = _fgetchar(fd)) > 0)
 		{
 			*ptr++ = c;
+			/* if newline, nul-terminate and return linebuffer*/
 			if (c == '\n')
 			{
 				*(--ptr) = '\0';
 				return (buf);
 			}
 		}
+		/* if something was read, nul-terminate before returning */
 		if (ptr - buf != 0)
 			*ptr = '\0';
 		else
@@ -56,9 +81,6 @@ char *_getline(const int fd)
 			free(buf);
 			return (NULL);
 		}
-
-		(void)eptr; /* TODO:  realloc if bigger buffer needed */
 	}
-
 	return (buf);
 }
