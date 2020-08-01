@@ -18,11 +18,12 @@ ssize_t _fgetchar(const int fd)
 	{
 		for (i = 3; i < OPEN_MAX; ++i)
 		{
-			if (fds[i].is_open)
+			fb = &fds[i];
+			if (fb->is_open)
 			{
-				memset(fds[i].buf, 0, READ_SIZE);
-				fds[i].bufp = fds[i].buf;
-				fds[i].n = 0;
+				memset(fb->buf, 0, READ_SIZE);
+				fb->bufp = fb->buf;
+				fb->n = 0;
 			}
 		}
 		return (EOF);
@@ -63,7 +64,7 @@ char *_getline(const int fd)
 		ptr = buf;
 		/* eptr = buf + BUFSIZ; */ /* TODO:  realloc if bigger buffer needed */
 		/* fill buffer */
-		while ((c = _fgetchar(fd)) > 0)
+		while ((c = _fgetchar(fd)) >= 0)
 		{
 			*ptr++ = c;
 			/* if newline, nul-terminate and return linebuffer*/
