@@ -1,6 +1,4 @@
 #!/usr/bin/python3
-
-import sys
 """
 [*] maps: /proc/<PID>/maps
 [*] mem: /proc/<PID>/maps
@@ -14,6 +12,8 @@ import sys
 [*] Found 'Holberton' at 10
 [*] Writing 'Hello :o)' at 22fa010
 """
+
+import sys
 
 
 def read_write_heap(pid, oldstr, newstr):
