@@ -17,6 +17,7 @@ import sys
 
 
 def read_write_heap(pid, oldstr, newstr):
+    """ finds and replace string in heap of process """
     try:
         heap_start = heap_end = None
         with open("/proc/{}/maps".format(pid), 'r') as mappings:
