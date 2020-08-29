@@ -18,43 +18,37 @@ import sys
 
 def read_write_heap(pid, oldstr, newstr):
     """ finds and replace string in heap of process """
-    try:
-        heap_start = heap_end = None
-        with open("/proc/{}/maps".format(pid), 'r') as mappings:
-            for line in mappings:
-                if '[heap]' in line:
-                    heap_start, heap_end = line.split(maxsplit=1)[0].split("-")
-        with open("/proc/{}/mem".format(pid), 'rb+') as mem:
-            heap_start = int(heap_start, 16)
-            heap_end = int(heap_end, 16)
-            mem.seek(heap_start)
-            heap = mem.read(heap_end - heap_start)
-            offset = heap.find(bytes(oldstr, "ASCII"))
-            if offset != -1:
-                mem.seek(heap_start + offset)
-                mem.write(bytes(newstr + '\0', "ASCII"))
-            else:
-                exit(1)
-    except Exception as e:
-        print("{}:".format(type(e).__name__),
-              e, file=sys.stderr)
-        exit(1)
+    assert len(oldstr) >= len(newstr),\
+        "<new-string> cannot be longer than <old-string>"
+    with open("/proc/{}/maps".format(pid), 'r') as maps:
+        for line in maps:
+            if '[heap]' in line:
+                break
+        h0, h1 = line.split(maxsplit=1)[0].split("-")
+        h0, h1 = int(h0, 16), int(h1, 16)
+    with open("/proc/{}/mem".format(pid), 'rb+') as mem:
+        mem.seek(h0)
+        heap = mem.read(h1 - h0)
+        offset = heap.find(bytes(oldstr, "ascii"))
+        assert offset != -1, "<old-string> not found"
+        mem.seek(h0 + offset)
+        mem.write(bytes(newstr + '\0', "ascii"))
 
 
 if __name__ == '__main__':
     try:
         _, pid, oldstr, newstr = sys.argv
-        if len(oldstr) < len(newstr):
-            raise ValueError("<new-string> cannot be longer than <old-string>")
         read_write_heap(pid, oldstr, newstr)
-    except ValueError as e:
-        print(e, "Usage: read_write_heap.py <pid> <old-string> <new-string>",
-              sep='\n', file=sys.stderr)
+    except AssertionError as e:
+        print("{}: {}".format(_, e), file=sys.stderr)
+        exit(1)
+    except ValueError:
+        print("Usage: read_write_heap.py <pid> <old-string> <new-string>",
+              file=sys.stderr)
         exit(1)
     except Exception as e:
-        print("You shouldn't be seeing this.\n",
+        print("You shouldn't be seeing this.",
               "DM me on Twitter @fernandogmo",
-              e, file=sys.stderr)
+              "{}: {}".format(type(e).__name__, e),
+              sep='\n', file=sys.stderr)
         exit(1)
-
-# %%
