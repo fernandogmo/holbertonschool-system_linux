@@ -21,10 +21,8 @@ def read_write_heap(pid, oldstr, newstr):
     assert len(oldstr) >= len(newstr),\
         "<new-string> cannot be longer than <old-string>"
     with open("/proc/{}/maps".format(pid), 'r') as maps:
-        for line in maps:
-            if '[heap]' in line:
-                break
-        h0, h1 = line.split(maxsplit=1)[0].split("-")
+        line = next(x for x in maps if '[heap]' in x)
+        h0, h1 = line.split(maxsplit=1)[0].split()
         h0, h1 = int(h0, 16), int(h1, 16)
     with open("/proc/{}/mem".format(pid), 'rb+') as mem:
         mem.seek(h0)
