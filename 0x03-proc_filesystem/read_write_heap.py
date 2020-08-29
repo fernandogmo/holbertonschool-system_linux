@@ -30,8 +30,11 @@ def read_write_heap(pid, oldstr, newstr):
             mem.seek(heap_start)
             heap = mem.read(heap_end - heap_start)
             offset = heap.find(bytes(oldstr, "ASCII"))
-            mem.seek(heap_start + offset)
-            mem.write(bytes(newstr + '\0', "ASCII"))
+            if offset != -1:
+                mem.seek(heap_start + offset)
+                mem.write(bytes(newstr + '\0', "ASCII"))
+            else:
+                exit(1)
     except Exception as e:
         print("{}:".format(type(e).__name__),
               e, file=sys.stderr)
