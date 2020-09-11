@@ -6,8 +6,8 @@ IDIR 	= 	./include
 SDIR 	= 	./src
 ODIR 	= 	./build
 
-TGT0	= 	0-readelf
-SRCS0 	= 	0-readelf.c \
+TGT0	= 	0-hreadelf
+SRCS0 	= 	0-hreadelf.c \
 		utils/print_elf_header.c \
 		utils/print_magic.c \
 		utils/print_class.c \
@@ -32,8 +32,8 @@ SRCS0 	= 	0-readelf.c \
 		# utils/print_program_headers.c\
 		# $(COMMON)
 
-TGT1	=	1-readelf
-SRCS1	=	1-readelf.c \
+TGT1	=	1-hreadelf
+SRCS1	=	1-hreadelf.c \
 		utils/print_section_headers.c
 
 # COMMON	=	$(wildcard /utils/*.c)
