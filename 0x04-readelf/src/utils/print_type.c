@@ -14,7 +14,7 @@ int print_type(Elf64_Ehdr *e)
 
 	t = (data == ELFDATA2MSB) ? be32toh(t) :
 	    (data == ELFDATA2LSB) ? le32toh(t) :
-	    	(errx(EXIT_FAILURE, "Invalid data encoding"), t);
+		(errx(EXIT_FAILURE, "Invalid data encoding"), t);
 	s = (t == ET_NONE) ? "NONE (None)" :
 	    (t == ET_REL) ? "REL (Relocatable file)" :
 	    (t == ET_EXEC) ? "EXEC (Executable file)" :
