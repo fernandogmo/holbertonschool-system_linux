@@ -15,5 +15,5 @@ asm_strcmp:
         sar     ecx, 31			; set ecx to sign bit (-1 or 0)
         test    eax, eax		; set SF & ZF flag registers
         mov     eax, 1			; return 1 unless
-        cmovle  eax, ecx		; (ZF==1 || SF!=0) ? ecx : 1
+        cmovle  eax, ecx		; (ZF==1 || SF!=0) ? (either 0 or -1) : 1
         ret
