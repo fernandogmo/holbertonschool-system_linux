@@ -15,10 +15,17 @@ size_t asm_strspn(const char *s, const char *accept);
 size_t asm_strcspn(const char *s, const char *reject);
 char *asm_strpbrk(const char *s, const char *accept);
 
-#define TEST(libfn, myfn, case) \
+#define TEST2(libfn, myfn, case) \
 	do { \
-	printf(#libfn "(\"%s\", \"%s\") => %d\n", case, libfn(case));\
-	printf(#myfn "(\"%s\", \"%s\") => %d\n\n", case, myfn(case));\
+	printf(#libfn "(\"%s\", \"%s\") \n=> %d\n", case, libfn(case));\
+	printf(#myfn "(\"%s\", \"%s\") \n=> %d\n\n", case, myfn(case));\
+	assert(libfn(case) == myfn(case)); \
+	} while (0)
+
+#define TEST3(libfn, myfn, case) \
+	do { \
+	printf(#libfn "(\"%s\", \"%s\", %d) \n=> %d\n", case, libfn(case));\
+	printf(#myfn "(\"%s\", \"%s\", %d) \n=> %d\n\n", case, myfn(case));\
 	assert(libfn(case) == myfn(case)); \
 	} while (0)
 
