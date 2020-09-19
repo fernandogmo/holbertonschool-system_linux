@@ -1,28 +1,23 @@
 GLOBAL asm_strcasecmp
 asm_strcasecmp:
-	xor	rcx, rcx
-.MAINLOOP:
-	movzx	r8d, BYTE [rdi + rcx]
-	movzx	r9d, BYTE [rsi + rcx]
-	cmp	r8b, 'A'
-	jl	.2ndSTRING
-	cmp	r8b, 'Z'
-	jg	.2ndSTRING
-	add	r8b, 'a' - 'A'
-.2ndSTRING:
-	cmp	r9b, 'A'
-	jl	.DIFF
-	cmp	r9b, 'Z'
-	jg	.DIFF
-	add	r9b, 'a' - 'A'
-.DIFF:
-	mov	eax, r8d
-	sub	eax, r9d
-	test	eax, eax
-	jnz	.RETURN
-	test	r8b, r8b
-	jz	.RETURN
-	inc	rcx
-	jmp	.MAINLOOP
+        xor     edx, edx
+.LOOP:
+        mov     cl, BYTE [rdi+rdx]
+        mov     al, BYTE [rsi+rdx]
+        lea     r9d, [rcx-'A']
+        lea     r8d, [rcx+'a'-'A']
+        cmp     r9b, 'z'-'a'
+        cmovb   ecx, r8d
+        lea     r9d, [rax-'A']
+        lea     r8d, [rax+'a'-'A']
+        cmp     r9b, 'z'-'a'
+        cmovnb  r8d, eax
+        movsx   eax, cl
+        movsx   r8d, r8b
+        sub     eax, r8d
+        jne     .RETURN
+        inc     rdx
+        test    cl, cl
+        jne     .LOOP
 .RETURN:
-	ret
+        ret
