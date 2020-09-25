@@ -14,6 +14,9 @@ int asm_strncasecmp(const char *s1, const char *s2, size_t n);
 size_t asm_strspn(const char *s, const char *accept);
 size_t asm_strcspn(const char *s, const char *reject);
 char *asm_strpbrk(const char *s, const char *accept);
+size_t asm_puti(int n);
+size_t asm_puti_base(int n, const char *base);
+
 
 #define TEST2(libfn, myfn, case) \
 	do { \
