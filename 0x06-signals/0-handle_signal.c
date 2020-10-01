@@ -1,14 +1,15 @@
 #include "signals.h"
 
 /**
- * sig_handler - prints message with value of signal caught
- * @signum: signal number caught by `signal`
+ * sigint_handler - prints message with value of SIGINT when caught
+ * @signum: int signal caught. unused due to optimizations.
  */
-void sig_handler(int signum)
+void sigint_handler(int signum __attribute__((__unused__)))
 {
-	/* not async-safe!!! */
-	printf("Gotcha! [%i]\n", signum);
-	fflush(stdout);
+	/* we can compute the platform's `SIGINT` at compile-time :) */
+	#define SIGNUM EXPAND_AND_STRINGIFY(SIGINT)
+	/* `printf` is not async-signal-safe so we use `write` */
+	write(STDOUT_FILENO, "Gotcha! [" SIGNUM "]\n", 13);
 }
 
 /**
@@ -17,5 +18,5 @@ void sig_handler(int signum)
  */
 int handle_signal(void)
 {
-	return (signal(SIGINT, sig_handler) == SIG_ERR ? -1 : 0);
+	return (signal(SIGINT, sigint_handler) == SIG_ERR ? -1 : 0);
 }
