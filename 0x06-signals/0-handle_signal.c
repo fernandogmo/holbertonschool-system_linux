@@ -9,7 +9,7 @@ void sigint_handler(int signum __attribute__((__unused__)))
 	/* we can compute the platform's `SIGINT` at compile-time :) */
 	#define SIGNUM EXPAND_AND_STRINGIFY(SIGINT)
 	/* `printf` is not async-signal-safe so we use `write` */
-	write(STDOUT_FILENO, "Gotcha! [" SIGNUM "]\n", 13);
+	write(STDOUT_FILENO, "Gotcha! [" SIGNUM "]\n", 12);
 }
 
 /**
