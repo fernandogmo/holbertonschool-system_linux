@@ -25,4 +25,6 @@ An `ls`-compatible binary for a legacy `Ubuntu 14.04` system with `gcc-4.8`
     - `errno` (man 3 errno)
 ## Questions
 * What is a `directory stream`?
-* 
+
+## References
+* `info '(coreutils) What information is listed'`
