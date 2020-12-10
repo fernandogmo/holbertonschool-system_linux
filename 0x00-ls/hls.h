@@ -8,17 +8,6 @@
 #include <sys/types.h>
 #include <time.h>
 
-#define DEBUG 0
-#if DEBUG
-void dbg_print_binary(unsigned char);
-void dbg_print_file_array(file_t **, size_t);
-void dbg_swap(file_t **, file_t **, file_t **, size_t);
-#else
-#define dbg_print_binary(x)
-#define dbg_print_file_array(x)
-#define dbg_swap(x)
-#endif
-
 #define BUFSIZE 1024
 #define SLICE(str, a, b) (str[b] = '\0', &str[a])
 
@@ -63,6 +52,10 @@ typedef struct file_t
 	struct file_t **subentries;
 } file_t;
 
+/* main.c */
+int create_fullpath(char **, const char *, char *);
+int hls(const char *[]);
+
 /* parse.c */
 void parse_args(char **, char **, option_t *);
 void parse_opts(char *, option_t *);
@@ -74,17 +67,17 @@ void read_subentries(DIR *, file_t *, size_t *);
 void print_subentries(file_t *, size_t, size_t, option_t);
 void print_files_in_dirs(file_t **, size_t, option_t);
 
-int create_fullpath(char **, const char *, char *);
-int hls(const char *[]);
-
+/* sort.c */
 void _quicksort(file_t **, size_t);
 void _alphasort(file_t **, int);
 void sort_subentries(file_t **, int);
 
+/* string.c */
 size_t _strlen(const char *);
 int _strcmp(char *, char *);
 int _strcoll(char *, char *);
 
+/* mem.c */
 void *_memset(void *s, int c, size_t n);
 void *_calloc(unsigned int nmemb, unsigned int size);
 

@@ -1,4 +1,5 @@
 #include "hls.h"
+#include "debug.h"
 
 /**
  * main - entry point
@@ -28,9 +29,11 @@ int main(int argc, char **argv)
 
 	/* print all files in current dir */
 	_alphasort(files, file_count);
-	#if DEBUG
-	printf("file count = %d\n", (int)file_count);
-	#endif /* DEBUG */
+
+	dbg_printf("options = %d = ", options);
+	dbg_print_binary(options);
+	dbg_printf("file count = %lu\n", file_count);
+
 	print_files_in_current_dir(files, file_count, options);
 
 	/* print every file in every dir */

@@ -1,4 +1,5 @@
 #include "hls.h"
+#include "debug.h"
 
 
 /**
@@ -14,9 +15,8 @@ void parse_args(char **args_in, char **args_out, option_t *options)
 
 	while ((arg = args_in[i]))
 	{
-		#if TESTING
-		printf("arg=%s\n", arg);
-		#endif
+		dbg_printf("parse_args:\n\targ = %s\n", arg);
+
 		if (arg[0] == '-' && _strcmp(arg, "-") != 0)
 		{
 			parse_opts(arg, options);
@@ -36,39 +36,34 @@ void parse_args(char **args_in, char **args_out, option_t *options)
  */
 void parse_opts(char *arg, option_t *options)
 {
-
 	while (*++arg)
 	{
-		#if TESTING
-		putchar(*arg);
-		putchar('=');
-		dbg_print_binary((unsigned char)*options);
-		putchar('\n');
-		#endif
+		/* dbg_printf("%c = ", *arg); */
+		/* dbg_print_binary((unsigned char)*options); */
 		switch (*arg)
 		{
 		case '1':
 			*options |= ONEPERLINE;
-			#if TESTING
-			SCREAM("made it to case '1' in `parse_opts`");
-			#endif
+			dbg_printf("parse_opts:\n\tcase %c\n", '1');
 			break;
 		case 'a':
 			*options |= ALL;
+			dbg_printf("parse_opts:\n\tcase %c\n", 'a');
 			break;
 		case 'A':
 			*options |= ALMOSTALL;
+			dbg_printf("parse_opts:\n\tcase %c\n", 'A');
 			break;
 		case 'h':
 			*options |= HUMAN;
+			dbg_printf("parse_opts:\n\tcase %c\n", 'h');
 			break;
 		case 'l':
 			*options |= LISTING;
+			dbg_printf("parse_opts:\n\tcase %c\n", 'l');
 			break;
 		default:
-			#if TESTING
-			SCREAM("TODO: handle bad flag");
-			#endif /* TESTING */
+			dbg_printf("TODO: handle bad flag\n");
 			fprintf(stderr, "Unknown flag\n");
 			exit(2);
 			break;
