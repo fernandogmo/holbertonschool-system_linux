@@ -12,6 +12,8 @@
 #define RED		"\x1B[31m"
 #define BLUE	"\x1B[34m"
 #define RESET	"\033[0m"
+#elif __GNUC__ < 5
+#define dbg_printf(fmt, val)
 #else
 #define dbg_printf(...)
 #endif /* DEBUG */
