@@ -51,7 +51,7 @@ ssize_t _fgetchar(const int fd)
  */
 char *_getline(const int fd)
 {
-	char *buf, *ptr;
+	char *buf, *ptr, *eptr, c;
 
 	if (fd == -1)
 	{
@@ -60,13 +60,11 @@ char *_getline(const int fd)
 	}
 	else
 	{
-		char c;
-
-		buf = malloc(BUFSIZ);
+		buf = malloc(LINEBUF_SIZE);
 		if (buf == NULL)
 			return (NULL);
 		ptr = buf;
-		/* eptr = buf + BUFSIZ; */ /* TODO:  realloc if bigger buffer needed */
+		eptr = ptr + LINEBUF_SIZE;
 		/* fill buffer */
 		while ((c = _fgetchar(fd)) >= 0)
 		{
@@ -76,6 +74,16 @@ char *_getline(const int fd)
 			{
 				*(--ptr) = '\0';
 				return (buf);
+			}
+			/* if buffer full, realloc */
+			if (ptr == eptr)
+			{
+				long int diff = eptr - buf;
+
+				dbg_printf(BLUE "old size of buf: %ld\n" RESET, diff);
+				buf = realloc(buf, diff + LINEBUF_SIZE);
+				ptr = buf + diff;
+				eptr = ptr + LINEBUF_SIZE;
 			}
 		}
 		/* if something was read, nul-terminate before returning */

@@ -5,11 +5,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define READ_SIZE BUFSIZ
+#define READ_SIZE	BUFSIZ
+#define LINEBUF_SIZE	256
 
 #ifdef DEBUG
 #define dbg_printf printf
-#define RED		"\x1B[31m"
+#define RED	"\x1B[31m"
 #define BLUE	"\x1B[34m"
 #define RESET	"\033[0m"
 #elif __GNUC__ < 5
