@@ -34,11 +34,10 @@ if __name__ == '__main__':
         _, pid, oldstr, newstr = sys.argv
         read_write_heap(pid, oldstr, newstr)
     except AssertionError as e:
-        print("{}: {}".format(_, e), file=sys.stderr)
+        print("{}: {}".format(_, e))
         exit(1)
     except ValueError:
-        print("Usage: read_write_heap.py <pid> <old-string> <new-string>",
-              file=sys.stderr)
+        print("Usage: read_write_heap.py <pid> <old-string> <new-string>")
         exit(1)
     except Exception as e:
         print("You shouldn't be seeing this.",
