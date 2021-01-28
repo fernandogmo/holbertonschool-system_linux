@@ -18,15 +18,19 @@ def read_write_heap(pid, oldstr, newstr):
         "<new-string> cannot be longer than <old-string>"
     with open("/proc/{}/maps".format(pid), 'r') as maps:
         line = next(x for x in maps if '[heap]' in x)
-        h0, h1 = line.split(maxsplit=1)[0].split("-")
-        h0, h1 = int(h0, 16), int(h1, 16)
+        start, end = line.split(maxsplit=1)[0].split("-")
+        start, end = int(start, 16), int(end, 16)
     with open("/proc/{}/mem".format(pid), 'rb+') as mem:
-        mem.seek(h0)
-        heap = mem.read(h1 - h0)
+        mem.seek(start)
+        heap = mem.read(end - start)
         offset = heap.find(bytes(oldstr, "ascii"))
         assert offset != -1, "<old-string> not found"
-        mem.seek(h0 + offset)
-        mem.write(bytes(newstr + '\0', "ascii"))
+        # find and replace all found entries because different systems
+        # might allocate entries in the heap in different order
+        while offset != -1:
+            mem.seek(start + offset)
+            mem.write(bytes(newstr + '\0', "ascii"))
+            offset = heap.find(bytes(oldstr, "ascii"), offset + len(oldstr))
 
 
 if __name__ == '__main__':
