@@ -1,5 +1,5 @@
 #ifndef READELF_H
-#define READELF_H 
+#define READELF_H
 
 #include <elf.h>
 #include <stdint.h>
@@ -48,6 +48,25 @@
 		    (class == ELFCLASS64) ? le64toh(x) : x;\
 	} while (0)
 
+#define INIT_SHDR_VARS(shdr)\
+	do {\
+	addr = shdr->sh_addr;\
+	addralign = shdr->sh_addralign;\
+	entsize = shdr->sh_entsize;\
+	flags = shdr->sh_flags;\
+	size = shdr->sh_size;\
+	info = shdr->sh_info;\
+	link = shdr->sh_link;\
+	type = shdr->sh_type;\
+	S_SET_ENDIAN(addr);\
+	S_SET_ENDIAN(addralign);\
+	S_SET_ENDIAN(entsize);\
+	S_SET_ENDIAN(flags);\
+	S_SET_ENDIAN(size);\
+	S_SET_ENDIAN(info);\
+	S_SET_ENDIAN(link);\
+	S_SET_ENDIAN(type);\
+	} while (0)
 
 /**
  * union ElfN_Ehdr - holds N-bit Elf file header type

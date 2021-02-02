@@ -1,5 +1,7 @@
 CC 	= 	$(if $(filter "$(USER)", "fernando"),gcc,gcc-4.8)
 CFLAGS 	= 	-Wall -Werror -Wextra -pedantic -ggdb3
+SHELL	=	/bin/bash
+CAT 	=	/home/fernando/.cargo/bin/bat
 LINTER  =	betty
 
 IDIR 	= 	./include
@@ -55,11 +57,11 @@ OBJS100	= 	$(SRCS100:%.c=$(ODIR)/%.o)
 DEPS	=	$(wildcard $(IDIR)/*.h)
 
 $(ODIR)/%.o : $(SDIR)/%.c
-	mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c -o $@ $< -I$(IDIR)
+	@mkdir -p $(@D)
+	@$(CC) $(CFLAGS) -c -o $@ $< -I$(IDIR)
 
 $(TGT0) : $(OBJS0)
-	$(CC) -o $@ $^
+	@$(CC) -o $@ $^
 
 $(TGT1) : $(OBJS1)
 	$(CC) -o $@ $^
@@ -70,14 +72,27 @@ $(TGT2) : $(OBJS2)
 $(TGT100) : $(OBJS100)
 	$(CC) -o $@ $^
 
-.PHONY : all, clean, again, lint, fullgrind
+.PHONY : all clean again test lint fullgrind
 all : $(ALL_TGT)
 
 clean :
 	rm -f $(foreach tgt, $(ALL_TGT), ./$(tgt))
 	rm -rf $(ODIR)
+	rm -f ./test/*.{orig,mine,diff}
 
 again : clean all
+
+test0 : $(TGT0)
+	@readelf -W -h ./test/python.obj > ./test/python.obj.orig
+	@./0-hreadelf ./test/python.obj > ./test/python.obj.mine
+	-diff -u ./test/python.obj.orig ./test/python.obj.mine > ./test/python.obj.diff
+	$(CAT) ./test/python.obj.diff 
+
+test1 : $(TGT1)
+	@readelf -W -S ./test/python.obj > ./test/python.obj.orig
+	./$(TGT1) ./test/python.obj > ./test/python.obj.mine
+	-diff -u ./test/python.obj.orig ./test/python.obj.mine > ./test/python.obj.diff
+	$(CAT) ./test/python.obj.diff 
 
 lint :
 	@$(LINTER) $(DEPS) $(foreach src, $(ALL_SRC), $(SDIR)/$(src))
