@@ -22,7 +22,7 @@ int print_osabi(Elf64_Ehdr *e)
 	    (os == ELFOSABI_OPENBSD) ? "UNIX - OpenBSD" :
 	    (os == ELFOSABI_STANDALONE) ? "Standalone App" :
 	    (os == ELFOSABI_ARM) ? "ARM" :
-		(sprintf(buf, "<unknown: %#x>", os), buf);
+		(sprintf(buf, "<unknown: %x>", os), buf);
 	printf("  %-35s%s\n", "OS/ABI:", s);
 	return (0);
 }
