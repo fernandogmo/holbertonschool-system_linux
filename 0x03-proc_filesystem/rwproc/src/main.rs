@@ -1,64 +1,51 @@
-#![allow(unused)]
-use itertools::Itertools;
-use std::{
-    convert::{Into, TryInto},
-    env::args,
-    fs::{read_to_string, File, OpenOptions},
-    io::{prelude::*, SeekFrom},
-    str::FromStr,
-    vec::Vec,
-};
+use std::env::args;
+use std::fs::{read_to_string, OpenOptions};
+use std::io;
+use std::io::{prelude::*, Read, SeekFrom};
+use std::vec::Vec;
 
-fn main() {
-    if let Some((_, pid, oldstr, newstr)) = args().collect_tuple() {
-        read_write_heap(pid, oldstr, newstr);
+fn main() -> std::io::Result<()> {
+    if let [_, pid, oldstr, newstr] = &args().collect::<Vec<_>>()[..] {
+        read_write_heap(pid, oldstr, newstr)?;
     } else {
-        println!("Usage: ./read_write_heap <pid> <old-string> <new-string>");
+        eprintln!("Usage: ./read_write_heap <pid> <old-string> <new-string>");
     }
-    // match args().skip(1).collect_tuple() {
-    //     Some((pid, oldstr, newstr)) => read_write_heap(pid, oldstr, newstr),
-    //     _ => println!("Usage: ./read_write_heap <pid> <old-string> <new-string>"),
-    // };
+    Ok(())
 }
 
-fn read_write_heap(pid: String, oldstr: String, newstr: String) -> () {
+fn read_write_heap(pid: &str, oldstr: &str, newstr: &str) -> io::Result<()> {
     assert!(oldstr.len() >= newstr.len());
-    let maps_file = read_to_string(format!("/proc/{}/maps", pid)).unwrap();
-    let mut line = maps_file
+    let maps_file = read_to_string(format!("/proc/{}/maps", pid))?;
+    let line = maps_file
         .lines()
         .find(|x| x.contains("[heap]"))
         .expect("Couldn't find heap in /proc/<pid>/maps");
-    let (start, end) = line
-        .split(' ')
-        .nth(0)
-        .expect("Couldn't parse heap entry in maps")
-        .split('-')
-        .collect_vec()
+    if let [start, end, ..] = line
+        .split(&[' ', '-'][..])
+        .collect::<Vec<_>>()
         .iter()
+        .take(2)
         .map(|x| usize::from_str_radix(x, 16).unwrap())
-        .collect_tuple()
-        .expect("Couldn't parse heap addresses");
-    let mut mem_file = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .open(format!("/proc/{}/mem", pid))
-        .unwrap();
-    mem_file.seek(SeekFrom::Start(start as u64)).unwrap();
-    let mut heap = Vec::new();
-    Read::by_ref(&mut mem_file)
-        .take((end - start) as u64)
-        .read_to_end(&mut heap);
-    for (i, w) in heap.windows(oldstr.len()).enumerate() {
-        if w == oldstr.as_bytes() {
-            mem_file.seek(SeekFrom::Start((start + i) as u64));
-            mem_file.write(newstr.as_bytes());
+        .collect::<Vec<_>>()[..]
+    {
+        let mut mem_file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(format!("/proc/{}/mem", pid))?;
+        let mut heap = Vec::new();
+        mem_file.seek(SeekFrom::Start(start as u64))?;
+        {
+            let mem_ref = Read::by_ref(&mut mem_file);
+            mem_ref.take((end - start) as u64).read_to_end(&mut heap)?;
         }
+        for (i, w) in heap.windows(oldstr.len()).enumerate() {
+            if w == oldstr.as_bytes() {
+                mem_file.seek(SeekFrom::Start((start + i) as u64))?;
+                mem_file.write(newstr.as_bytes())?;
+            }
+        }
+        Ok(())
+    } else {
+        panic!("Couldn't parse heap addresses");
     }
-    // let slice = &[0u8];
-    // for i in 0..=heap.len() - oldstr.len() {
-    //     if heap[i..].starts_with(oldstr.as_bytes()) {
-    //         mem_file.seek(SeekFrom::Current(i as i64));
-    //         mem_file.write()
-    //     }
-    // }
 }
