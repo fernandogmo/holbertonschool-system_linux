@@ -8,20 +8,22 @@ use std::{
 };
 
 fn main() -> std::io::Result<()> {
-    let prog = args().next().unwrap();
-    let [pid, oldstr, newstr]: [_; 3] = args()
-        .collect::<Vec<_>>()
-        .try_into()
-        .expect(format!("{} <pid> <old-string> <new-string>", prog).as_str());
-    Ok(read_write_heap(&pid, &oldstr, &newstr)?)
+    let prog_name = args().nth(0).unwrap();
+    if let [pid, oldstr, newstr] = &args().skip(1).collect::<Vec<_>>()[..] {
+        Ok(read_write_heap(dbg!(pid), oldstr, newstr)?)
+    } else {
+        eprintln!("Usage: {} <pid> <old-string> <new-string>", prog_name);
+        exit(1)
+    }
 }
 
 // TODO: add some tests
 fn read_write_heap(pid: &str, oldstr: &str, newstr: &str) -> std::io::Result<()> {
-    if oldstr.len() >= newstr.len() {
+    if newstr.len() > oldstr.len() {
         eprintln!("<new-string> cannot be longer than <old-string>");
         exit(1);
     };
+    // TODO: better error message here
     let maps_file = read_to_string(format!("/proc/{}/maps", pid))?;
     let line = maps_file
         .lines()
