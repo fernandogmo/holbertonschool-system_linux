@@ -1,8 +1,10 @@
-// #![allow(unused)]
-use std::fs::{read_to_string, OpenOptions};
 use std::io::{prelude::*, Read, SeekFrom};
 use std::vec::Vec;
 use std::{convert::TryInto, env::args};
+use std::{
+    fs::{read_to_string, OpenOptions},
+    process::exit,
+};
 
 fn main() -> std::io::Result<()> {
     if let [_, pid, oldstr, newstr] = &args().collect::<Vec<_>>()[..] {
@@ -13,15 +15,17 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
+// TODO: add some tests
 fn read_write_heap(pid: &str, oldstr: &str, newstr: &str) -> std::io::Result<()> {
-    assert!(oldstr.len() >= newstr.len());
+    if oldstr.len() >= newstr.len() {
+        eprintln!("<new-string> cannot be longer than <old-string>");
+        exit(1);
+    };
     let maps_file = read_to_string(format!("/proc/{}/maps", pid))?;
     let line = maps_file
         .lines()
         .find(|x| x.contains("[heap]"))
         .expect("Couldn't find heap in /proc/<pid>/maps");
-    // TODO: add some tests
-    // // let line = "123-r21 qw er ty";
     let [start, end]: [usize; 2] = line
         .splitn(3, &[' ', '-'][..])
         .collect::<Vec<_>>()
@@ -39,13 +43,17 @@ fn read_write_heap(pid: &str, oldstr: &str, newstr: &str) -> std::io::Result<()>
     Read::by_ref(&mut mem_file)
         .take((end - start) as u64)
         .read_to_end(&mut heap)?;
-
-    // TODO: exit with error if oldstr not found. use `filter_map`?
+    let mut num_matches = 0;
     for (i, w) in heap.windows(oldstr.len()).enumerate() {
         if w == oldstr.as_bytes() {
+            num_matches += 1;
             mem_file.seek(SeekFrom::Start((start + i) as u64))?;
             mem_file.write(newstr.as_bytes())?;
         }
     }
+    if num_matches == 0 {
+        eprintln!("Couldn't find `{}` on the heap", oldstr);
+        exit(1);
+    };
     Ok(())
 }
