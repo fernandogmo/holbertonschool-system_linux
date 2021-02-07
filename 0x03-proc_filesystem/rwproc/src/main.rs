@@ -1,4 +1,5 @@
-use std::io::{prelude::*, Read, SeekFrom};
+#![allow(unused)]
+use std::io::{prelude::*, Error, ErrorKind, Read, SeekFrom};
 use std::vec::Vec;
 use std::{convert::TryInto, env::args};
 use std::{
@@ -7,12 +8,12 @@ use std::{
 };
 
 fn main() -> std::io::Result<()> {
-    if let [_, pid, oldstr, newstr] = &args().collect::<Vec<_>>()[..] {
-        read_write_heap(pid, oldstr, newstr)?;
-    } else {
-        eprintln!("Usage: ./read_write_heap <pid> <old-string> <new-string>");
-    }
-    Ok(())
+    let prog = args().next().unwrap();
+    let [pid, oldstr, newstr]: [_; 3] = args()
+        .collect::<Vec<_>>()
+        .try_into()
+        .expect(format!("{} <pid> <old-string> <new-string>", prog).as_str());
+    Ok(read_write_heap(&pid, &oldstr, &newstr)?)
 }
 
 // TODO: add some tests
