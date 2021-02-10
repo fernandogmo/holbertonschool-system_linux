@@ -1,5 +1,4 @@
-#![allow(unused)]
-use std::io::{prelude::*, Error, ErrorKind, Read, SeekFrom};
+use std::io::{prelude::*, Read, SeekFrom};
 use std::vec::Vec;
 use std::{convert::TryInto, env::args};
 use std::{
@@ -18,6 +17,7 @@ fn main() -> std::io::Result<()> {
 }
 
 // TODO: add some tests
+// TODO: split into functions
 fn read_write_heap(pid: &str, oldstr: &str, newstr: &str) -> std::io::Result<()> {
     if newstr.len() > oldstr.len() {
         eprintln!("<new-string> cannot be longer than <old-string>");
