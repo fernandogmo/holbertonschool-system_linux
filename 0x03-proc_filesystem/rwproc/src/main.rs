@@ -9,7 +9,7 @@ use std::{
 fn main() -> std::io::Result<()> {
     let prog_name = args().nth(0).unwrap();
     if let [pid, oldstr, newstr] = &args().skip(1).collect::<Vec<_>>()[..] {
-        Ok(read_write_heap(dbg!(pid), oldstr, newstr)?)
+        Ok(read_write_heap(pid, oldstr, newstr)?)
     } else {
         eprintln!("Usage: {} <pid> <old-string> <new-string>", prog_name);
         exit(1)
@@ -46,15 +46,14 @@ fn read_write_heap(pid: &str, oldstr: &str, newstr: &str) -> std::io::Result<()>
     Read::by_ref(&mut mem_file)
         .take((end - start) as u64)
         .read_to_end(&mut heap)?;
-    let mut num_matches = 0;
-    for (i, w) in heap.windows(oldstr.len()).enumerate() {
-        if w == oldstr.as_bytes() {
-            num_matches += 1;
-            mem_file.seek(SeekFrom::Start((start + i) as u64))?;
-            mem_file.write(newstr.as_bytes())?;
-        }
-    }
-    if num_matches == 0 {
+    if let None = heap.windows(oldstr.len()).enumerate()
+        .fold(None, |acc, (i, w)| {
+            acc.or((w == oldstr.as_bytes()).then(|| {
+                mem_file.seek(SeekFrom::Start((start + i) as u64)).unwrap();
+                mem_file.write(newstr.as_bytes()).ok()
+            }))
+        })
+    {
         eprintln!("Couldn't find `{}` on the heap", oldstr);
         exit(1);
     };
