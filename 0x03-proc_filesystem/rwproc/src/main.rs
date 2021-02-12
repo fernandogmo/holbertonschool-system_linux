@@ -46,16 +46,19 @@ fn read_write_heap(pid: &str, oldstr: &str, newstr: &str) -> std::io::Result<()>
     Read::by_ref(&mut mem_file)
         .take((end - start) as u64)
         .read_to_end(&mut heap)?;
-    if let None = heap.windows(oldstr.len()).enumerate()
+    heap.windows(oldstr.len())
+        .enumerate()
         .fold(None, |acc, (i, w)| {
             acc.or((w == oldstr.as_bytes()).then(|| {
-                mem_file.seek(SeekFrom::Start((start + i) as u64)).unwrap();
-                mem_file.write(newstr.as_bytes()).ok()
+                mem_file
+                    .seek(SeekFrom::Start((start + i) as u64))
+                    .and_then(|_| mem_file.write(newstr.as_bytes()))
+                    .ok()
             }))
         })
-    {
-        eprintln!("Couldn't find `{}` on the heap", oldstr);
-        exit(1);
-    };
-    Ok(())
+        .and_then(|_| Some(()))
+        .ok_or_else(|| {
+            eprintln!("Couldn't find `{}` on the heap", oldstr);
+            exit(1);
+        })
 }
