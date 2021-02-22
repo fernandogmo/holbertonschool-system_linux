@@ -4,7 +4,7 @@
  * sigint_handler - prints message with value of SIGINT when caught
  * @signum: int signal caught. unused due to optimizations.
  */
-void sigint_handler(int signum __attribute__((__unused__)))
+static inline void sigint_handler(int signum __attribute__((__unused__)))
 {
 	/* we can compute the platform's `SIGINT` at compile-time :) */
 	#define SIGNUM EXPAND_AND_STRINGIFY(SIGINT)
