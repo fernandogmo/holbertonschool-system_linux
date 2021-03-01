@@ -6,7 +6,7 @@
  */
 void (*current_handler_sigaction(void))(int)
 {
-	struct sigaction oldact = {0};
+	struct sigaction oldact;
 
 	return (sigaction(SIGINT, NULL, &oldact) ? NULL : oldact.sa_handler);
 }
