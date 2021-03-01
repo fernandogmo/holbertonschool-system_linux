@@ -7,7 +7,8 @@
 static inline void sigint_handler(int signum __attribute__((__unused__)))
 {
 	#define SIGNUM EXPAND_AND_STRINGIFY(SIGINT)
-	write(STDOUT_FILENO, "Gotcha! [" SIGNUM "]\n", 12);
+	#define MSG "Gotcha! [" SIGNUM "]\n"
+	signum = write(STDOUT_FILENO, MSG, sizeof(MSG) - 1);
 }
 
 /**
@@ -16,7 +17,9 @@ static inline void sigint_handler(int signum __attribute__((__unused__)))
  */
 int handle_sigaction(void)
 {
+	C99(
 	struct sigaction act = {.sa_handler = sigint_handler};
 
 	return (sigaction(SIGINT, &act, NULL));
+	);
 }
