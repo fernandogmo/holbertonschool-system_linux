@@ -24,6 +24,11 @@ int sigset_init(sigset_t *set, int *signals);
 int signals_block(int *signals);
 int signals_unblock(int *signals);
 int handle_pending(void (*handler)(int));
+void all_in_one(void);
+int sigset_init(sigset_t *set, int *signals);
+int signals_block(int *signals);
+int signals_unblock(int *signals);
+int handle_pending(void (*handler)(int));
 
 #define STRINGIFY(expr) #expr
 #define EXPAND_AND_STRINGIFY(expr) STRINGIFY(expr)
@@ -40,6 +45,7 @@ _Pragma("GCC diagnostic pop")\
 
 #ifdef __GNUC__
 #define UNUSED(x) UNUSED_##x __attribute__((__unused__))
+#define __maybe_unused __attribute__((__unused__))
 #else
 #define UNUSED(x) UNUSED_##x
 #endif
