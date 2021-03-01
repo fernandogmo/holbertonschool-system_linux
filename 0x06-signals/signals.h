@@ -28,16 +28,26 @@ int handle_pending(void (*handler)(int));
 #define STRINGIFY(expr) #expr
 #define EXPAND_AND_STRINGIFY(expr) STRINGIFY(expr)
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wvariadic-macros"
+#define C99(...) do { \
+_Pragma("GCC diagnostic push")\
+_Pragma("GCC diagnostic ignored \"-Wpedantic\"")\
+	__VA_ARGS__ \
+_Pragma("GCC diagnostic pop")\
+} while (0)
+#pragma GCC diagnostic pop
+
 #ifdef __GNUC__
-	#define UNUSED(x) (UNUSED_ ## x __attribute__((__unused__)))
+#define UNUSED(x) UNUSED_##x __attribute__((__unused__))
 #else
-	#define UNUSED(x) UNUSED_ ## x
+#define UNUSED(x) UNUSED_##x
 #endif
 
 #ifdef __GNUC__
-	#define UNUSED_FUNCTION(x) (__attribute__((__unused__)) UNUSED_ ## x)
+#define UNUSED_FUNCTION(x) (__attribute__((__unused__)) UNUSED_##x)
 #else
-	#define UNUSED_FUNCTION(x) UNUSED_ ## x
+#define UNUSED_FUNCTION(x) UNUSED_##x
 #endif
 
 #endif /* SIGNALS_H */
