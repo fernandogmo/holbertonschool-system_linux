@@ -6,12 +6,10 @@
  * @info: pointer to a siginfo_t
  * @ucontext: pointer to a ucontext_t
  */
-static inline void sigquit_handler(int sig __attribute__((__unused__)),
-				   siginfo_t *info,
-				   void *ucontext __attribute__((__unused__)))
+static inline void sigquit_handler(int sig, siginfo_t *info, void *ucontext)
 {
 	printf("SIGQUIT sent by %i\n", info->si_pid);
-	fflush(stdout);
+	fflush(stdout), (void)sig, (void)ucontext;
 }
 
 /**
@@ -19,12 +17,11 @@ static inline void sigquit_handler(int sig __attribute__((__unused__)),
  * Return: 0 on success, -1 on error
  */
 int trace_signal_sender(void)
-{
-	C99(
-	struct sigaction act = {
-	    .sa_sigaction = sigquit_handler,
-	    .sa_flags = SA_SIGINFO};
+{C99(
+	sigaction_t act = {
+		.sa_sigaction = sigquit_handler,
+		.sa_flags = SA_SIGINFO};
 
 	return (sigaction(SIGQUIT, &act, NULL));
-	);
+);
 }

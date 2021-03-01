@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 typedef __sighandler_t sighandler_t; /* void (*fn)(int) */
+typedef struct sigaction sigaction_t;
 /*
  * Should I instead include `#define _GNU_SOURCE`?
  * See: https://stackoverflow.com/q/5582211/9221785
@@ -35,7 +36,8 @@ int handle_pending(void (*handler)(int));
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wvariadic-macros"
-#define C99(...) do { \
+#define C99(...) \
+do { \
 _Pragma("GCC diagnostic push")\
 _Pragma("GCC diagnostic ignored \"-Wpedantic\"")\
 	__VA_ARGS__ \
