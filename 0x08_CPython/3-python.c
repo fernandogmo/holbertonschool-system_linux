@@ -41,7 +41,7 @@ void print_python_bytes(PyObject *p)
 	puts("[.] bytes object info");
 	if (PyBytes_Check(p))
 	{
-		Py_ssize_t size = PyBytes_Size(p);
+		Py_ssize_t size = ((PyVarObject *)p)->ob_size; /* PyBytes_Size(p) */
 		char *str = ((PyBytesObject *)p)->ob_sval; /* PyBytes_AsString(p) */
 		printf("  size: %ld\n", size);
 		printf("  trying string: %s\n", str);
