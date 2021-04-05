@@ -14,7 +14,7 @@ void print_python_list(PyObject *p)
 	puts("[*] Python list info");
 	if (PyList_Check(p))
 	{
-		Py_ssize_t size = ((PyVarObject*)(p))->ob_size; /* Py_SIZE */
+		Py_ssize_t size = ((PyVarObject *)(p))->ob_size; /* Py_SIZE */
 		printf("[*] Size of the Python List = %li\n", size);
 		printf("[*] Allocated = %li\n", ((PyListObject *)p)->allocated);
 		for (Py_ssize_t i = 0; i < size; ++i)
@@ -42,7 +42,7 @@ void print_python_bytes(PyObject *p)
 	if (PyBytes_Check(p))
 	{
 		Py_ssize_t size = ((PyVarObject *)p)->ob_size; /* PyBytes_Size(p) */
-		char *str = ((PyBytesObject *)p)->ob_sval; /* PyBytes_AsString(p) */
+		char *str = ((PyBytesObject *)p)->ob_sval;     /* PyBytes_AsString(p) */
 		printf("  size: %ld\n", size);
 		printf("  trying string: %s\n", str);
 		printf("  first %ld bytes:", size = size < 10 ? size + 1 : 10);
@@ -64,8 +64,8 @@ void print_python_float(PyObject *p)
 	puts("[.] float object info");
 	if (PyFloat_Check(p))
 	{
-		char *s = PyOS_double_to_string(PyFloat_AsDouble(p), 'r', 0,
-						Py_DTSF_ADD_DOT_0, NULL);
+		char *s = PyOS_double_to_string(((PyFloatObject *)(p))->ob_fval,
+						'r', 0, Py_DTSF_ADD_DOT_0, NULL);
 		printf("  value: %s\n", s);
 		PyMem_Free(s);
 	}
