@@ -65,7 +65,7 @@ void print_python_float(PyObject *p)
 	if (PyFloat_Check(p))
 	{
 		char *s = PyOS_double_to_string(((PyFloatObject *)(p))->ob_fval,
-						'r', 0, Py_DTSF_ADD_DOT_0, NULL);
+						'g', 16, Py_DTSF_ADD_DOT_0, NULL);
 		printf("  value: %s\n", s);
 		PyMem_Free(s);
 	}
