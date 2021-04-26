@@ -24,8 +24,12 @@ ex_2 : ex_2.c
 strace_0 : 0-main.c strace.c
 strace_1 : 1-main.c strace.c
 strace_2 : 2-main.c strace.c
-strace_3 : 3-main.c strace.c
-strace_4 : 4-main.c strace.c
+strace_3 : 2-main.c strace.c
+strace_4 : 2-main.c strace.c
+strace_5 : 2-main.c strace.c
+strace_6 : 2-main.c strace.c
+strace_7 : 2-main.c strace.c
+strace_8 : 2-main.c strace.c
 
 RED = \033[0;31m
 BLUE = \033[0;34m
