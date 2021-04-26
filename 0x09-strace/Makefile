@@ -16,7 +16,7 @@ CFLAGS	= -Wall \
 .PHONY: test clean again fullgrind check_version
 
 % :
-	@$(CC) $(CFLAGS) $(LDFLAGS) -o $@.out $^
+	@$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 ex_0 : ex_0.c
 ex_1 : ex_1.c
@@ -36,7 +36,7 @@ test: $(TARGET)
 	@echo -en "${BLUE}"
 	@$(CC) --version | head -1
 	@echo -en "${NC}"
-	timeout --signal=KILL 0.5s ./$<.out /bin/echo Holberton | tee /dev/tty | wc
+	timeout --signal=KILL 0.5s ./$< /bin/echo Holberton | tee /dev/tty | wc
 
 clean:
 	@$(RM) *.o *.so
