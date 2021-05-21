@@ -13,9 +13,9 @@ CFLAGS	+=	-Wall
 CFLAGS	+=	-Werror
 CFLAGS	+=	-Wextra
 CFLAGS	+=	-pedantic
-CFLAGS	+=	-fstack-protector-all # Add canary code to detect stack smashing
-CFLAGS	+=	-Wshadow # Warn when shadowing variables
-# LAGS	+=	-O2 -D_FORTIFY_SOURCE=2 # Add canary code, i.e. detect buffer overflows
+# CFLAGS	+=	-fstack-protector-all # Add canary code to detect stack smashing
+# CFLAGS	+=	-Wshadow # Warn when shadowing variables
+# CFLAGS	+=	-O2 -D_FORTIFY_SOURCE=2 # Add canary code, i.e. detect buffer overflows
 
 INCLUDE	?=
 
@@ -35,7 +35,7 @@ BLUE	=	\e[34m
 NC	=	\e[0m
 GRAY	= 	\e[90m
 
-.PHONY: test fullgrind clean again cc_version
+.PHONY: test bench fullgrind clean pycheck
 
 % :
 	@$(CC) $(CFLAGS) $(CEXTRAFLAGS) $(INCLUDE) -o $@.out $^ $(LDFLAGS) $(LDEXTRAFLAGS) $(LDLIBS)
@@ -45,12 +45,18 @@ GRAY	= 	\e[90m
 10: 10-main.c 10-blur_portion.c
 10fake: 10-main.c 10-blur_portion.fakeimg.c
 ARGS_10 := images/small_orig.pbm images/kernel_0.knl
+11: 11-main.c 11-blur_image.c 10-blur_portion.c
 
 TARGET ?= 10
 TESTARGS ?= $(ARGS_10)
 test: $(TARGET)
 	@$(CC) --version | head -1 1> >(sed $$'s,.*,${BLUE}&${NC},' >&1)
 	timeout --signal=KILL 2s ./$<.out $(TESTARGS)
+	viu output.pbm
+
+BENCHARGS ?= images/car_orig.pbm images/kernel_1.knl
+bench: $(TARGET)
+	time ./$<.out $(BENCHARGS)
 
 clean:
 	@$(RM) *.o *.so *.out
@@ -63,9 +69,6 @@ fullgrind: $(TARGET)
 
 lint:
 	$(LINTER) *.c *.h
-
-gcc_version:
-	$(CC) --version
 
 pycheck :
 	@echo $(PYTHONLIB)

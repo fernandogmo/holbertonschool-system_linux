@@ -8,6 +8,8 @@
 
 #include "list.h"
 
+#define RELEASE 1
+
 #define RED	"\033[0;31m"
 #define BLUE    "\033[0;34m"
 #define GREEN   "\033[0;32m"
@@ -22,7 +24,7 @@
 		   : ((y < h/2) ? c2 FMT NC : c4 FMT NC))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
-#define ROUND(a) ((a >= 0) ? (uint32_t)(a + 0.5f) : (uint32_t)(a - 0.5f))
+#define ROUND(a) ((a > 0) ? (uint_fast32_t)(a + 0.5f) : (uint_fast32_t)(a - 0.5f))
 #define FPTOLERANCE 0.00001f
 #define EQUALISH(a, b) (((a) - FPTOLERANCE) < b && ((a) + FPTOLERANCE) > b)
 
@@ -40,8 +42,6 @@ typedef struct pixel_s
 	uint8_t b;
 } pixel_t;
 
-typedef uint8_t color_component;
-
 /**
  * struct img_s - Image
  *
@@ -56,7 +56,9 @@ typedef struct img_s
 	pixel_t *pixels;
 } img_t;
 
+#define PIXEL(PIXARR) ((pixel_t){PIXARR[0], PIXARR[1], PIXARR[2]})
 #define GET_PIXEL(IMG, X, Y) (IMG->pixels[ (((Y) * IMG->w) + (X)) ])
+#define PUT_PIXEL(P, IMG, X, Y) (GET_PIXEL(IMG, X, Y) = PIXEL(P))
 
 /**
  * struct kernel_s - Convolution kernel
@@ -137,5 +139,34 @@ void blur_image(img_t *img_blur, img_t const *img, kernel_t const *kernel);
 task_t *create_task(task_entry_t entry, void *param);
 void destroy_task(task_t *task);
 void *exec_tasks(list_t const *tasks);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wvariadic-macros"
+
+#ifndef C99
+#define C99(...)                \
+do {                        \
+_Pragma("GCC diagnostic push")          \
+_Pragma("GCC diagnostic ignored \"-Wpedantic\"")\
+_Pragma("GCC diagnostic ignored \"-Wvla\"") \
+    __VA_ARGS__             \
+_Pragma("GCC diagnostic pop")           \
+} while (0)
+#endif /* C99 */
+
+#ifndef DBG
+#if !RELEASE
+#include <stdio.h>
+#define DBG(...)            \
+C99(do {                \
+printf("%s:%d: ", __func__, __LINE__);  \
+    __VA_ARGS__;            \
+} while (0);)
+#else
+#define DBG(...)
+#endif
+#endif
+
+#pragma GCC diagnostic pop
 
 #endif /* MULTITHREADING_H */
