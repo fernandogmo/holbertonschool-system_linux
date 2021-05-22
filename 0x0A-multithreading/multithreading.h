@@ -8,7 +8,9 @@
 
 #include "list.h"
 
+#ifndef DEBUG
 #define RELEASE 1
+#endif
 
 #define RED	"\033[0;31m"
 #define BLUE    "\033[0;34m"

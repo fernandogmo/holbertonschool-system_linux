@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "multithreading.h"
+#pragma GCC diagnostic ignored "-Wunused-result"
 
 /**
  * load_kernel - Load convolution kernel from a file
