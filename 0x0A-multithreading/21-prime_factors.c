@@ -9,7 +9,7 @@
 * Return: list_t with prime factors of @s, else NULL on failure
 */
 list_t *prime_factors(char const *s)
-{
+{C99(
 	if (!s) return (NULL);
 	size_t n = strtoul(s, NULL, 10), d = 2;
 	list_t *primes = malloc(sizeof(*primes));
@@ -29,4 +29,4 @@ list_t *prime_factors(char const *s)
 	}
 	puts("");
 	return (primes);
-}
+);}
