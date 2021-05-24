@@ -2,7 +2,7 @@
 #include <stdarg.h>
 #include "multithreading.h"
 
-pthread_mutex_t lock;
+static pthread_mutex_t lock;
 
 /**
   * construct_mutex - builds mutex before main function runs using a
@@ -14,8 +14,8 @@ __attribute__((constructor))void construct_mutex(void)
 }
 
 /**
-  * destroy_mutex - builds mutex before main function runs using a
-  * *		      GCC constructor attribute
+  * destroy_mutex - destroys mutex after main function runs using a
+  * *		      GCC desstructor attribute
   */
 __attribute__((destructor))void destroy_mutex(void)
 {
