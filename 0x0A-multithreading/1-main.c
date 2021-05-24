@@ -10,10 +10,10 @@
  *
  * Return: NULL
  */
-void *_thread_entry(__attribute__((unused))void *arg)
+void *_thread_entry(__attribute__((unused)) void *arg)
 {
-    tprintf("Hello from thread\n");
-    return (NULL);
+	tprintf("Hello from thread\n");
+	return (NULL);
 }
 
 /**
@@ -23,12 +23,12 @@ void *_thread_entry(__attribute__((unused))void *arg)
  */
 int main(void)
 {
-    pthread_t tid;
+	pthread_t tid;
 
-    pthread_create(&tid, NULL, &_thread_entry, NULL);
-    pthread_join(tid, NULL);
+	pthread_create(&tid, NULL, &_thread_entry, NULL);
+	pthread_join(tid, NULL);
 
-    tprintf("Hello from main thread\n");
+	tprintf("Hello from main thread\n");
 
-    return (EXIT_SUCCESS);
+	return (EXIT_SUCCESS);
 }
