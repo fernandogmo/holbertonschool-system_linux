@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "multithreading.h"
 
 static pthread_mutex_t task_lock;
@@ -31,15 +32,12 @@ __attribute__((destructor))void destroy_task_mutex(void)
  * Return: task_t pointer
  */
 task_t *create_task(task_entry_t entry, void *param)
-{
-	task_t *t = malloc(sizeof(*t));
-	if (!t) return (NULL);
-	t->entry = entry;
-	t->param = param;
-	t->status = PENDING;
-	t->result = NULL;
-	return (t);
-}
+{C99(
+	task_t src = (task_t){entry, param, PENDING, NULL, task_lock};
+	task_t *dst = calloc(1, sizeof(*dst));
+	if (!dst) return (NULL);
+	return (memcpy(dst, &src, sizeof(src)));
+);}
 
 /**
  * destroy_task - desc
@@ -65,24 +63,22 @@ void *exec_tasks(list_t const *tasks)
 {C99(
 	if (!tasks) return (NULL);
 	node_t *node = tasks->head;
-	int i = 0;
-	while (node)
+	size_t i = 0;
+	for (; node && i < tasks->size; i++, node = node->next)
 	{
-		task_t* task = (task_t *) node->content;
-		if (task->status == PENDING)
+		task_t* t = (task_t *)node->content;
+		pthread_mutex_lock(&task_lock);
+		if (t->status == PENDING)
 		{
-			task->status = STARTED;
-			tprintf("[%02d] Started\n", i);
-			task->result = (void *)
-				(((list_t *(*) (char const *)) task->entry)((char const *) task->param));
-			tprintf("[%02d] Success\n", i);
-			if (task->result == NULL)
-				task->status = FAILURE;
-			else
-				task->status = SUCCESS;
+			t->status = STARTED;
+			pthread_mutex_unlock(&task_lock);
+			tprintf("[%02lu] Started\n", i);
+			t->result = t->entry(t->param);
+			t->status = t->result ? SUCCESS : FAILURE;
+			tprintf("[%02lu] %s\n", i, t->result ? "Success" : "Failure");
 		}
-		node = node->next;
-		i++;
+		else
+			pthread_mutex_unlock(&task_lock);
 	}
 	return (NULL);
 );}
