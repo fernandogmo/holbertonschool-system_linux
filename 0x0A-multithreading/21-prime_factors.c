@@ -22,11 +22,9 @@ list_t *prime_factors(char const *s)
 		{
 			size_t *p = malloc(sizeof(*p));
 			if (p) *p = d; else return (NULL);
-			printf("d = %lu, ", d);
 			list_add(primes, p);
 			n /= d;
 		}
 	}
-	puts("");
 	return (primes);
 );}
