@@ -8,7 +8,7 @@ static pthread_mutex_t task_lock;
   * construct_task_mutex - builds mutex before main function runs using a
   * *		      GCC constructor attribute
   */
-__attribute__((constructor))void construct_mutex(void)
+__attribute__((constructor))void construct_task_mutex(void)
 {
 	pthread_mutex_init(&task_lock, NULL);
 }
