@@ -10,21 +10,21 @@
 */
 list_t *prime_factors(char const *s)
 {C99(
-	if (!s) return (NULL);
-	size_t n = strtoul(s, NULL, 10), d = 2;
-	list_t *primes = malloc(sizeof(*primes));
-	if (!primes) return (NULL);
-	list_init(primes);
-	while (n > 1)
+	list_t *ps = malloc(sizeof(*ps));
+	if (!ps || !s) { free(NULL); return (NULL);}
+	list_init(ps);
+	size_t i = 0, a[64] = {0};
+	size_t d = 2, n = strtoul(s, NULL, 10);
+	while (n >= d*d)
 	{
-		if (n % d) d++;
-		else
-		{
-			size_t *p = malloc(sizeof(*p));
-			if (p) *p = d; else return (NULL);
-			list_add(primes, p);
-			n /= d;
-		}
+		if (n % d) d += (d % 2) + 1;
+		else n /= (a[i++] = d);
 	}
-	return (primes);
+	for(a[i] = n, i = 0; a[i] > 1; i++)
+	{
+		size_t *p = malloc(sizeof(*p));
+		if (p) *p = a[i]; else return (NULL);
+		list_add(ps, p);
+	}
+	return (ps);
 );}
