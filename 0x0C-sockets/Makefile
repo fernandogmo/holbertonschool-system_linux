@@ -7,16 +7,17 @@
 ARGS_0	:= lsof -i :12345
 1 : 1-server.c
 ARGS_1	:= ./1-client localhost 12345
-ARGS_2	:=
+2 : 2-client.c
+ARGS_2	:= localhost 12345
 BENCH_2	:=
 
-TARGET ?= 1
+TARGET ?= 2
 TESTARGS ?= $(ARGS_$<)
 test: $(TARGET)
 	@$(CC) --version | head -1 1> >(sed $$'s,.*,${BLUE}&${NC},' >&1)
-	./$<.out &
-	$(TESTARGS)
-	killall $<.out
+	./2-server &
+	./$<.out $(TESTARGS)
+	killall 2-server
 
 NUMTHREADS ?= 16
 BENCHARGS ?= $(BENCH_$<)
